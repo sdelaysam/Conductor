@@ -28,7 +28,8 @@ import java.util.Map;
 
 public class LifecycleHandler implements ActivityLifecycleCallbacks {
 
-    private static final String ANDROID_X_ACTIVITY = "android.support.v4.app.FragmentActivity";
+    private static final String ANDROID_X_ACTIVITY = "androidx.appcompat.app.FragmentActivity";
+    private static final String SUPPORT_ACTIVITY = "android.support.v4.app.FragmentActivity";
 
     private static final String KEY_PENDING_PERMISSION_REQUESTS = "LifecycleHelper.pendingPermissionRequests";
     private static final String KEY_PERMISSION_REQUEST_CODES = "LifecycleHelper.permissionRequests";
@@ -244,7 +245,7 @@ public class LifecycleHandler implements ActivityLifecycleCallbacks {
         Class cls = activity.getClass().getSuperclass();
 
         while (cls != null) {
-            if (cls.getCanonicalName().equals(ANDROID_X_ACTIVITY)) {
+            if (cls.getCanonicalName().equals(ANDROID_X_ACTIVITY) || cls.getCanonicalName().equals(SUPPORT_ACTIVITY)) {
                 return true;
             }
             cls = cls.getSuperclass();
