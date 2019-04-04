@@ -100,6 +100,13 @@ public abstract class SharedElementTransitionChangeHandler extends TransitionCha
         removedViews.clear();
     }
 
+    @Override
+    protected void onEnd() {
+        exitTransition = null;
+        enterTransition = null;
+        sharedElementTransition = null;
+    }
+
     void configureTransition(@NonNull final ViewGroup container, @Nullable View from, @Nullable View to, @NonNull final Transition transition, boolean isPush) {
         final View nonExistentView = new View(container.getContext());
 
