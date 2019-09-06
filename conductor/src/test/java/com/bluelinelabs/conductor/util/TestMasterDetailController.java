@@ -2,9 +2,8 @@ package com.bluelinelabs.conductor.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import androidx.annotation.IdRes;
-import androidx.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,23 +11,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.bluelinelabs.conductor.Controller;
+import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
+
 import com.bluelinelabs.conductor.ControllerChangeHandler;
 import com.bluelinelabs.conductor.ControllerChangeType;
+import com.bluelinelabs.conductor.MasterDetailController;
 
-public class TestController extends Controller implements CallStateOwner, ChangeHandlerHistoryOwner {
+public class TestMasterDetailController extends MasterDetailController implements CallStateOwner, ChangeHandlerHistoryOwner {
 
-    @IdRes public static final int VIEW_ID = 2342;
-    @IdRes public static final int CHILD_VIEW_ID_1 = 2343;
-    @IdRes public static final int CHILD_VIEW_ID_2 = 2344;
+    @IdRes public static final int VIEW_ID = 2442;
+    @IdRes public static final int CHILD_VIEW_ID_1 = 2443;
+    @IdRes public static final int CHILD_VIEW_ID_2 = 2444;
 
     private static final String KEY_CALL_STATE = "TestController.currentCallState";
 
     private CallState currentCallState = new CallState(false);
     private ChangeHandlerHistory changeHandlerHistory = new ChangeHandlerHistory();
 
-    @NonNull
-    @Override
+    @Override @NonNull
     protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
         currentCallState.createViewCalls++;
         FrameLayout view = new AttachFakingFrameLayout(inflater.getContext());
@@ -38,10 +39,13 @@ public class TestController extends Controller implements CallStateOwner, Change
         childContainer1.setId(CHILD_VIEW_ID_1);
         view.addView(childContainer1);
 
-        FrameLayout childContainer2 = new AttachFakingFrameLayout(inflater.getContext());
-        childContainer2.setId(CHILD_VIEW_ID_2);
-        view.addView(childContainer2);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            FrameLayout childContainer2 = new AttachFakingFrameLayout(inflater.getContext());
+            childContainer2.setId(CHILD_VIEW_ID_2);
+            view.addView(childContainer2);
+        }
 
+        initRouters(view, CHILD_VIEW_ID_1, CHILD_VIEW_ID_2);
         return view;
     }
 
@@ -149,6 +153,16 @@ public class TestController extends Controller implements CallStateOwner, Change
         super.onCreateOptionsMenu(menu, inflater);
 
         currentCallState.createOptionsMenuCalls++;
+    }
+
+    @Override
+    public ControllerChangeHandler getRootDetailPushHandler() {
+        return MockChangeHandler.taggedHandler("push", true);
+    }
+
+    @Override
+    public ControllerChangeHandler getRootDetailPopHandler() {
+        return MockChangeHandler.taggedHandler("pop", true);
     }
 
     @Override
