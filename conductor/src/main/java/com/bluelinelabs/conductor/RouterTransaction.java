@@ -17,6 +17,7 @@ public class RouterTransaction {
     private static final String KEY_PUSH_TRANSITION = "RouterTransaction.pushControllerChangeHandler";
     private static final String KEY_POP_TRANSITION = "RouterTransaction.popControllerChangeHandler";
     private static final String KEY_TAG = "RouterTransaction.tag";
+    private static final String KEY_IS_DETAIL = "RouterTransaction.isDetail";
     private static final String KEY_INDEX = "RouterTransaction.transactionIndex";
     private static final String KEY_ATTACHED_TO_ROUTER = "RouterTransaction.attachedToRouter";
 
@@ -26,6 +27,7 @@ public class RouterTransaction {
     private ControllerChangeHandler pushControllerChangeHandler;
     private ControllerChangeHandler popControllerChangeHandler;
     private boolean attachedToRouter;
+    private boolean isDetail;
     int transactionIndex = INVALID_INDEX;
 
     @NonNull
@@ -42,6 +44,7 @@ public class RouterTransaction {
         pushControllerChangeHandler = ControllerChangeHandler.fromBundle(bundle.getBundle(KEY_PUSH_TRANSITION));
         popControllerChangeHandler = ControllerChangeHandler.fromBundle(bundle.getBundle(KEY_POP_TRANSITION));
         tag = bundle.getString(KEY_TAG);
+        isDetail = bundle.getBoolean(KEY_IS_DETAIL);
         transactionIndex = bundle.getInt(KEY_INDEX);
         attachedToRouter = bundle.getBoolean(KEY_ATTACHED_TO_ROUTER);
     }
@@ -114,6 +117,16 @@ public class RouterTransaction {
         }
     }
 
+    RouterTransaction isDetail(boolean isDetail) {
+        this.isDetail = isDetail;
+        this.controller.isDetail = isDetail;
+        return this;
+    }
+
+    boolean isDetail() {
+        return isDetail;
+    }
+
     /**
      * Used to serialize this transaction into a Bundle
      */
@@ -131,6 +144,7 @@ public class RouterTransaction {
         }
 
         bundle.putString(KEY_TAG, tag);
+        bundle.putBoolean(KEY_IS_DETAIL, isDetail);
         bundle.putInt(KEY_INDEX, transactionIndex);
         bundle.putBoolean(KEY_ATTACHED_TO_ROUTER, attachedToRouter);
 

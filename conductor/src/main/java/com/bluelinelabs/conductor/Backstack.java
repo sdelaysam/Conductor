@@ -22,6 +22,10 @@ class Backstack implements Iterable<RouterTransaction> {
         return backstack.isEmpty();
     }
 
+    void clear() {
+        backstack.clear();
+    }
+
     int size() {
         return backstack.size();
     }
