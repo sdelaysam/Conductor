@@ -296,7 +296,6 @@ public class ReattachCaseTests {
 
         ActivityProxy activityProxy = new ActivityProxy().create(null);
         AttachFakingFrameLayout container = new AttachFakingFrameLayout(activityProxy.getActivity());
-        container.setId(5);
         container.setNeedDelayPost(true); // to simulate calling posts after resume
 
         activityProxy.setView(container);
