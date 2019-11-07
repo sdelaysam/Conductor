@@ -3,7 +3,9 @@ package com.bluelinelabs.conductor;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
+import com.bluelinelabs.conductor.internal.LifecycleHandler;
 import com.bluelinelabs.conductor.util.ActivityProxy;
+import com.bluelinelabs.conductor.util.AttachFakingFrameLayout;
 import com.bluelinelabs.conductor.util.MockChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
 import com.bluelinelabs.conductor.util.ViewUtils;
@@ -285,6 +287,68 @@ public class ReattachCaseTests {
         assertTrue(controller1.isAttached());
         assertFalse(controller2.isAttached());
         assertTrue(controller3.isAttached());
+    }
+
+    @Test
+    public void testPendingChanges() {
+        Controller controller1 = new TestController();
+        Controller controller2 = new TestController();
+
+        ActivityProxy activityProxy = new ActivityProxy().create(null);
+        AttachFakingFrameLayout container = new AttachFakingFrameLayout(activityProxy.getActivity());
+        container.setId(5);
+        container.setNeedDelayPost(true); // to simulate calling posts after resume
+
+        activityProxy.setView(container);
+
+        Router router = Conductor.attachRouter(activityProxy.getActivity(), container, null);
+        router.setRoot(RouterTransaction.with(controller1));
+        router.pushController(RouterTransaction.with(controller2));
+
+        activityProxy.start().resume();
+        container.setNeedDelayPost(false);
+
+        assertTrue(controller2.isAttached());
+    }
+
+    @Test
+    public void testPendingChangesAfterRotation() {
+        Controller controller1 = new TestController();
+        Controller controller2 = new TestController();
+
+        // first activity
+        ActivityProxy activityProxy = new ActivityProxy().create(null);
+        AttachFakingFrameLayout container1 = new AttachFakingFrameLayout(activityProxy.getActivity());
+
+        container1.setNeedDelayPost(true); // delay forever as view will be removed
+        activityProxy.setView(container1);
+
+        // first attachRouter: Conductor.attachRouter(activityProxy.getActivity(), container1, null)
+        LifecycleHandler lifecycleHandler = LifecycleHandler.install(activityProxy.getActivity());
+        Router router = lifecycleHandler.getRouter(container1, null);
+        router.setRoot(RouterTransaction.with(controller1));
+
+        // setup controllers
+        router.pushController(RouterTransaction.with(controller2));
+
+        // simulate setRequestedOrientation in activity onCreate
+        activityProxy.start().resume();
+        Bundle savedState = new Bundle();
+        activityProxy.saveInstanceState(savedState).pause().stop(true);
+
+        // recreate activity and view
+        activityProxy = new ActivityProxy().create(savedState);
+        AttachFakingFrameLayout container2 = new AttachFakingFrameLayout(activityProxy.getActivity());
+        activityProxy.setView(container2);
+
+        // second attach router with the same lifecycleHandler (do manually as Roboelectric recreates retained fragments)
+        // Conductor.attachRouter(activityProxy.getActivity(), container2, savedState);
+        router = lifecycleHandler.getRouter(container2, savedState);
+        router.rebindIfNeeded();
+
+        activityProxy.start().resume();
+
+        assertTrue(controller2.isAttached());
     }
 
     private void sleepWakeDevice() {
