@@ -642,6 +642,29 @@ public class ControllerLifecycleCallbacksTests {
         assertEquals(0, callState.restoreViewStateCalls);
     }
 
+    @Test
+    public void testChildLifecycleAfterPushAndPop() {
+        Controller parent = new TestController();
+        parent.setRetainViewMode(RetainViewMode.RETAIN_DETACH);
+        router.pushController(RouterTransaction.with(parent)
+                .pushChangeHandler(MockChangeHandler.defaultHandler())
+                .popChangeHandler(MockChangeHandler.defaultHandler()));
+
+        TestController child = new TestController();
+        Router childRouter = parent.getChildRouter((ViewGroup)parent.getView().findViewById(TestController.VIEW_ID));
+        childRouter
+                .setRoot(RouterTransaction.with(child)
+                        .pushChangeHandler(new SimpleSwapChangeHandler())
+                        .popChangeHandler(new SimpleSwapChangeHandler()));
+
+        Controller nextController = new TestController();
+        router.pushController(RouterTransaction.with(nextController));
+        router.popCurrentController();
+
+        assertTrue(parent.isAttached());
+        assertTrue(child.isAttached());
+    }
+
     private void testChildLifecycle(Controller parent, Router childRouter, Controller child) {
         attachLifecycleListener(child);
 
