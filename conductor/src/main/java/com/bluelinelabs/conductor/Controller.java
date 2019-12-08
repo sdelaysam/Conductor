@@ -953,6 +953,8 @@ public abstract class Controller {
                     childTransaction.controller.attach(childTransaction.controller.view);
                 }
             }
+
+            childRouter.rebindIfNeeded();
         }
     }
 
@@ -1328,7 +1330,11 @@ public abstract class Controller {
             }
 
             if (!frozen && view != null && viewWasDetached) {
+                View aView = view;
                 detach(view, false, false);
+                if (view == null && aView.getParent() == router.container) {
+                    router.container.removeView(aView); // need to remove the view when this controller is a child controller
+                }
             }
         }
     }
