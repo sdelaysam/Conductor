@@ -609,6 +609,38 @@ public class ControllerLifecycleCallbacksTests {
         assertEquals(2, callState.destroyCalls);
     }
 
+    @Test
+    public void testLifecycleWhenPopNonCurrentController() {
+        String controller1Tag = "controller1";
+        String controller2Tag = "controller2";
+        String controller3Tag = "controller3";
+
+        TestController controller1 = new TestController();
+        TestController controller2 = new TestController();
+        TestController controller3 = new TestController();
+
+        router.pushController(RouterTransaction.with(controller1)
+                .tag(controller1Tag));
+
+        router.pushController(RouterTransaction.with(controller2)
+                .tag(controller2Tag));
+
+        router.pushController(RouterTransaction.with(controller3)
+                .tag(controller3Tag));
+
+        router.popController(controller2);
+
+        final CallState callState = ((CallStateOwner) controller2).currentCallState();
+        assertEquals(1, callState.attachCalls);
+        assertEquals(1, callState.createViewCalls);
+        assertEquals(1, callState.detachCalls);
+        assertEquals(1, callState.destroyViewCalls);
+        assertEquals(1, callState.destroyCalls);
+        assertEquals(1, callState.contextAvailableCalls);
+        assertEquals(1, callState.contextUnavailableCalls);
+        assertEquals(1, callState.saveViewStateCalls);
+        assertEquals(0, callState.restoreViewStateCalls);
+    }
 
     private void testChildLifecycle(Controller parent, Router childRouter, Controller child) {
         attachLifecycleListener(child);

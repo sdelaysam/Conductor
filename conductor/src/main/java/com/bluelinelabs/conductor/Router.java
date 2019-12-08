@@ -148,9 +148,7 @@ public abstract class Router {
             while (iterator.hasNext()) {
                 RouterTransaction transaction = iterator.next();
                 if (transaction.controller == controller) {
-                    if (controller.isAttached()) {
-                        trackDestroyingController(transaction);
-                    }
+                    trackDestroyingController(transaction);
                     iterator.remove();
                     removedTransaction = transaction;
                 } else if (removedTransaction != null) {
@@ -787,7 +785,7 @@ public abstract class Router {
         performControllerChange(to, from, isPush, validateChangeHandler(to, from, isPush, changeHandler));
     }
 
-    void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush, @Nullable ControllerChangeHandler changeHandler) {
+    private void performControllerChange(@Nullable RouterTransaction to, @Nullable RouterTransaction from, boolean isPush, @Nullable ControllerChangeHandler changeHandler) {
         Controller toController = to != null ? to.controller : null;
         Controller fromController = from != null ? from.controller : null;
         boolean forceDetachDestroy = false;
@@ -800,12 +798,21 @@ public abstract class Router {
             // Activity or controller should be handling this by finishing or at least hiding this view.
             changeHandler = new NoOpControllerChangeHandler();
             forceDetachDestroy = true;
+        } else if (!isPush && fromController != null && !fromController.isAttached()) {
+            // We're popping fromController from the middle of the backstack,
+            // need to do it immediately and destroy the controller
+            changeHandler = new NoOpControllerChangeHandler();
+            forceDetachDestroy = true;
         }
 
         performControllerChange(toController, fromController, isPush, changeHandler);
 
-        if (forceDetachDestroy && fromController != null && fromController.getView() != null) {
-            fromController.detach(fromController.getView(), true, false);
+        if (forceDetachDestroy && fromController != null) {
+            if (fromController.getView() != null) {
+                fromController.detach(fromController.getView(), true, false);
+            } else {
+                fromController.destroy();
+            }
         }
     }
 
