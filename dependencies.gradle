@@ -1,5 +1,5 @@
 ext {
-    minSdkVersion = 16
+    minSdkVersion = 14
     compileSdkVersion = 28
     targetSdkVersion = 28
 
