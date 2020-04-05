@@ -5,9 +5,12 @@ import com.bluelinelabs.conductor.changehandler.HorizontalChangeHandler;
 import com.bluelinelabs.conductor.util.TestController;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 import static org.junit.Assert.assertEquals;
 
+@RunWith(RobolectricTestRunner.class)
 public class ControllerChangeHandlerTests {
 
     @Test
@@ -26,8 +29,8 @@ public class ControllerChangeHandlerTests {
         assertEquals(horizontalChangeHandler.getClass(), restoredHorizontal.getClass());
         assertEquals(fadeChangeHandler.getClass(), restoredFade.getClass());
 
-        HorizontalChangeHandler restoredHorizontalCast = (HorizontalChangeHandler)restoredHorizontal;
-        FadeChangeHandler restoredFadeCast = (FadeChangeHandler)restoredFade;
+        HorizontalChangeHandler restoredHorizontalCast = (HorizontalChangeHandler) restoredHorizontal;
+        FadeChangeHandler restoredFadeCast = (FadeChangeHandler) restoredFade;
 
         assertEquals(horizontalChangeHandler.getAnimationDuration(), restoredHorizontalCast.getAnimationDuration());
         assertEquals(horizontalChangeHandler.removesFromViewOnPush(), restoredHorizontalCast.removesFromViewOnPush());

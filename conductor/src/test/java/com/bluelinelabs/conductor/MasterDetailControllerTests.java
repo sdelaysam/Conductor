@@ -185,10 +185,10 @@ public class MasterDetailControllerTests {
         RouterTransaction detailTransaction = controller.getDetailRouter().getBackstack().get(0);
         RouterTransaction detailTransaction1 = controller.getDetailRouter().getBackstack().get(1);
 
-        assertEquals(masterController, masterTransaction.controller);
-        assertEquals(masterController1, masterTransaction1.controller);
-        assertEquals(detailController, detailTransaction.controller);
-        assertEquals(detailController1, detailTransaction1.controller);
+        assertEquals(masterController, masterTransaction.controller());
+        assertEquals(masterController1, masterTransaction1.controller());
+        assertEquals(detailController, detailTransaction.controller());
+        assertEquals(detailController1, detailTransaction1.controller());
 
         controller = rotateAndGetController("root");
         assertTrue(controller.isTwoPanesMode());
@@ -299,7 +299,7 @@ public class MasterDetailControllerTests {
         assertEquals(1, controller.getMasterRouter().getBackstackSize());
         assertEquals(1, controller.getDetailRouter().getBackstackSize());
         assertEquals(masterTransaction4, controller.getMasterRouter().getBackstack().get(0));
-        assertEquals(detailTransaction4.controller, controller.getDetailRouter().getBackstack().get(0).controller);
+        assertEquals(detailTransaction4.controller(), controller.getDetailRouter().getBackstack().get(0).controller());
     }
 
     @Test
@@ -361,12 +361,12 @@ public class MasterDetailControllerTests {
 
         Controller masterController4 = new TestController();
         RouterTransaction masterTransaction4 = RouterTransaction.with(masterController4);
-        Controller masterController3 = controller.getMasterRouter().getBackstack().get(2).controller;
+        Controller masterController3 = controller.getMasterRouter().getBackstack().get(2).controller();
         masterController3.getRouter().pushController(masterTransaction4);
 
         Controller detailController4 = new TestController();
         RouterTransaction detailTransaction4 = RouterTransaction.with(detailController4);
-        Controller detailController3 = controller.getDetailRouter().getBackstack().get(2).controller;
+        Controller detailController3 = controller.getDetailRouter().getBackstack().get(2).controller();
         detailController3.getRouter().pushController(detailTransaction4);
 
         assertEquals(4, controller.getMasterRouter().getBackstackSize());
@@ -423,10 +423,9 @@ public class MasterDetailControllerTests {
     }
 
     private void compareTransactions(RouterTransaction transaction1, RouterTransaction transaction2) {
-        assertEquals(transaction1.transactionIndex, transaction2.transactionIndex);
         assertEquals(transaction1.isDetail(), transaction2.isDetail());
         assertEquals(transaction1.tag(), transaction2.tag());
-        assertEquals(transaction1.controller.getInstanceId(), transaction2.controller.getInstanceId());
+        assertEquals(transaction1.controller().getInstanceId(), transaction2.controller().getInstanceId());
     }
 
     private void testActivityResultForMasterDetail(boolean isLandscape) {

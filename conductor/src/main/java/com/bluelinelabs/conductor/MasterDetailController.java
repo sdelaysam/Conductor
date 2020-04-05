@@ -196,7 +196,7 @@ public abstract class MasterDetailController extends Controller {
     private void setNeedsAttachLast(List<RouterTransaction> transactions) {
         for (int i = 0; i < transactions.size(); i++) {
             RouterTransaction transaction = transactions.get(i);
-            transaction.controller.setNeedsAttach(i == transactions.size() - 1);
+            transaction.controller().setNeedsAttach(i == transactions.size() - 1);
         }
     }
 

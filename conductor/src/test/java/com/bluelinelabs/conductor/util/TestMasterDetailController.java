@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bluelinelabs.conductor.ControllerChangeHandler;
 import com.bluelinelabs.conductor.ControllerChangeType;
@@ -29,8 +30,9 @@ public class TestMasterDetailController extends MasterDetailController implement
     private CallState currentCallState = new CallState(false);
     private ChangeHandlerHistory changeHandlerHistory = new ChangeHandlerHistory();
 
-    @Override @NonNull
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    @NonNull
+    @Override
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         currentCallState.createViewCalls++;
         FrameLayout view = new AttachFakingFrameLayout(inflater.getContext());
         view.setId(VIEW_ID);

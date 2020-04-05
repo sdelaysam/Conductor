@@ -363,7 +363,7 @@ public class ControllerLifecycleActivityReferenceTests {
     }
 
 
-    static class ActivityReferencingLifecycleListener extends Controller.LifecycleListener {
+    static class ActivityReferencingLifecycleListener implements Controller.LifecycleListener {
         final List<Boolean> changeEndReferences = new ArrayList<>();
         final List<Boolean> postCreateViewReferences = new ArrayList<>();
         final List<Boolean> postAttachReferences = new ArrayList<>();
