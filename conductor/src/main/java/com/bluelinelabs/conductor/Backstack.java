@@ -1,6 +1,7 @@
 package com.bluelinelabs.conductor;
 
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -58,7 +59,7 @@ class Backstack implements Iterable<RouterTransaction> {
     @NonNull
     RouterTransaction pop() {
         RouterTransaction popped = backstack.pop();
-        popped.controller.destroy();
+        popped.controller().destroy();
         return popped;
     }
 
@@ -89,7 +90,7 @@ class Backstack implements Iterable<RouterTransaction> {
 
     boolean contains(@NonNull Controller controller) {
         for (RouterTransaction transaction : backstack) {
-            if (controller == transaction.controller) {
+            if (controller == transaction.controller()) {
                 return true;
             }
         }

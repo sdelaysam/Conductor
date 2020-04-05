@@ -5,10 +5,10 @@
 .checkstyle
 
 # IntelliJ IDEA
-.idea
 *.iml
 *.ipr
 *.iws
+*.idea/dictionaries
 classes
 gen-external-apklibs
 

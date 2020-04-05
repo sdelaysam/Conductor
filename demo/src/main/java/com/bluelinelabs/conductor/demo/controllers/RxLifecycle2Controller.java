@@ -1,12 +1,15 @@
 package com.bluelinelabs.conductor.demo.controllers;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.bluelinelabs.conductor.ControllerChangeHandler;
 import com.bluelinelabs.conductor.ControllerChangeType;
@@ -41,24 +44,14 @@ public class RxLifecycle2Controller extends RxController {
 
     public RxLifecycle2Controller() {
         Observable.interval(1, TimeUnit.SECONDS)
-                .doOnDispose(new Action() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "Disposing from constructor");
-                    }
-                })
+                .doOnDispose(() -> Log.i(TAG, "Disposing from constructor"))
                 .compose(this.<Long>bindUntilEvent(ControllerEvent.DESTROY))
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long num) {
-                        Log.i(TAG, "Started in constructor, running until onDestroy(): " + num);
-                    }
-                });
+                .subscribe(num -> Log.i(TAG, "Started in constructor, running until onDestroy(): " + num));
     }
 
     @NonNull
     @Override
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         Log.i(TAG, "onCreateView() called");
 
         View view = inflater.inflate(R.layout.controller_lifecycle, container, false);
@@ -68,19 +61,9 @@ public class RxLifecycle2Controller extends RxController {
         tvTitle.setText(getResources().getString(R.string.rxlifecycle_title, TAG));
 
         Observable.interval(1, TimeUnit.SECONDS)
-                .doOnDispose(new Action() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "Disposing from onCreateView()");
-                    }
-                })
+                .doOnDispose(() -> Log.i(TAG, "Disposing from onCreateView()"))
                 .compose(this.<Long>bindUntilEvent(ControllerEvent.DESTROY_VIEW))
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long num) {
-                        Log.i(TAG, "Started in onCreateView(), running until onDestroyView(): " + num);
-                    }
-                });
+                .subscribe(num -> Log.i(TAG, "Started in onCreateView(), running until onDestroyView(): " + num));
 
         return view;
     }
@@ -94,19 +77,9 @@ public class RxLifecycle2Controller extends RxController {
         (((ActionBarProvider)getActivity()).getSupportActionBar()).setTitle("RxLifecycle2 Demo");
 
         Observable.interval(1, TimeUnit.SECONDS)
-                .doOnDispose(new Action() {
-                    @Override
-                    public void run() {
-                        Log.i(TAG, "Disposing from onAttach()");
-                    }
-                })
+                .doOnDispose(() -> Log.i(TAG, "Disposing from onAttach()"))
                 .compose(this.<Long>bindUntilEvent(ControllerEvent.DETACH))
-                .subscribe(new Consumer<Long>() {
-                    @Override
-                    public void accept(Long num) {
-                        Log.i(TAG, "Started in onAttach(), running until onDetach(): " + num);
-                    }
-                });
+                .subscribe(num -> Log.i(TAG, "Started in onAttach(), running until onDetach(): " + num));
     }
 
     @Override

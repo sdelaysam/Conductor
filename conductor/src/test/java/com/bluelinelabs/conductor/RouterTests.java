@@ -1,8 +1,9 @@
 package com.bluelinelabs.conductor;
 
-import androidx.annotation.NonNull;
 import android.view.View;
 import android.view.ViewGroup;
+
+import androidx.annotation.NonNull;
 
 import com.bluelinelabs.conductor.Controller.LifecycleListener;
 import com.bluelinelabs.conductor.changehandler.FadeChangeHandler;
@@ -250,9 +251,9 @@ public class RouterTests {
         assertEquals(middleTransaction, fetchedBackstack.get(1));
         assertEquals(topTransaction, fetchedBackstack.get(2));
 
-        assertEquals(router, rootTransaction.controller.getRouter());
-        assertEquals(router, middleTransaction.controller.getRouter());
-        assertEquals(router, topTransaction.controller.getRouter());
+        assertEquals(router, rootTransaction.controller().getRouter());
+        assertEquals(router, middleTransaction.controller().getRouter());
+        assertEquals(router, topTransaction.controller().getRouter());
     }
 
     @Test
@@ -264,8 +265,8 @@ public class RouterTests {
         router.pushController(oldTopTransaction);
         assertEquals(2, router.getBackstackSize());
 
-        assertTrue(oldRootTransaction.controller.isAttached());
-        assertTrue(oldTopTransaction.controller.isAttached());
+        assertTrue(oldRootTransaction.controller().isAttached());
+        assertTrue(oldTopTransaction.controller().isAttached());
 
         RouterTransaction rootTransaction = RouterTransaction.with(new TestController());
         RouterTransaction middleTransaction = RouterTransaction.with(new TestController()).pushChangeHandler(MockChangeHandler.noRemoveViewOnPushHandler());
@@ -281,11 +282,11 @@ public class RouterTests {
         assertEquals(middleTransaction, fetchedBackstack.get(1));
         assertEquals(topTransaction, fetchedBackstack.get(2));
 
-        assertFalse(oldRootTransaction.controller.isAttached());
-        assertFalse(oldTopTransaction.controller.isAttached());
-        assertTrue(rootTransaction.controller.isAttached());
-        assertTrue(middleTransaction.controller.isAttached());
-        assertTrue(topTransaction.controller.isAttached());
+        assertFalse(oldRootTransaction.controller().isAttached());
+        assertFalse(oldTopTransaction.controller().isAttached());
+        assertTrue(rootTransaction.controller().isAttached());
+        assertTrue(middleTransaction.controller().isAttached());
+        assertTrue(topTransaction.controller().isAttached());
     }
 
     @Test
@@ -304,9 +305,9 @@ public class RouterTests {
         assertEquals(1, router.getBackstackSize());
         assertEquals(rootTransaction, router.getBackstack().get(0));
 
-        assertTrue(rootTransaction.controller.isAttached());
-        assertFalse(transaction1.controller.isAttached());
-        assertFalse(transaction2.controller.isAttached());
+        assertTrue(rootTransaction.controller().isAttached());
+        assertFalse(transaction1.controller().isAttached());
+        assertFalse(transaction2.controller().isAttached());
     }
 
     @Test
@@ -325,9 +326,9 @@ public class RouterTests {
         assertEquals(1, router.getBackstackSize());
         assertEquals(rootTransaction, router.getBackstack().get(0));
 
-        assertTrue(rootTransaction.controller.isAttached());
-        assertFalse(transaction1.controller.isAttached());
-        assertFalse(transaction2.controller.isAttached());
+        assertTrue(rootTransaction.controller().isAttached());
+        assertFalse(transaction1.controller().isAttached());
+        assertFalse(transaction2.controller().isAttached());
     }
 
     @Test
@@ -364,8 +365,8 @@ public class RouterTests {
 
         assertEquals(2, router.getBackstackSize());
 
-        assertTrue(rootTransaction.controller.isAttached());
-        assertTrue(topTransaction.controller.isAttached());
+        assertTrue(rootTransaction.controller().isAttached());
+        assertTrue(topTransaction.controller().isAttached());
 
         List<RouterTransaction> fetchedBackstack = router.getBackstack();
         assertEquals(rootTransaction, fetchedBackstack.get(0));
@@ -381,9 +382,9 @@ public class RouterTests {
         assertEquals(rootTransaction, fetchedBackstack.get(0));
         assertEquals(newTopTransaction, fetchedBackstack.get(1));
 
-        assertTrue(rootTransaction.controller.isAttached());
-        assertFalse(topTransaction.controller.isAttached());
-        assertTrue(newTopTransaction.controller.isAttached());
+        assertTrue(rootTransaction.controller().isAttached());
+        assertFalse(topTransaction.controller().isAttached());
+        assertTrue(newTopTransaction.controller().isAttached());
     }
 
     @Test
@@ -394,14 +395,14 @@ public class RouterTests {
         List<RouterTransaction> backstack = Arrays.asList(transaction1, transaction2);
         router.setBackstack(backstack, null);
 
-        assertEquals(1, transaction1.transactionIndex);
-        assertEquals(2, transaction2.transactionIndex);
+        assertEquals(1, transaction1.getTransactionIndex());
+        assertEquals(2, transaction2.getTransactionIndex());
 
         backstack = Arrays.asList(transaction2, transaction1);
         router.setBackstack(backstack, null);
 
-        assertEquals(1, transaction2.transactionIndex);
-        assertEquals(2, transaction1.transactionIndex);
+        assertEquals(1, transaction2.getTransactionIndex());
+        assertEquals(2, transaction1.getTransactionIndex());
 
         router.handleBack();
 
@@ -425,14 +426,14 @@ public class RouterTests {
         List<RouterTransaction> backstack = Arrays.asList(transaction1, transaction2);
         childRouter.setBackstack(backstack, null);
 
-        assertEquals(2, transaction1.transactionIndex);
-        assertEquals(3, transaction2.transactionIndex);
+        assertEquals(2, transaction1.getTransactionIndex());
+        assertEquals(3, transaction2.getTransactionIndex());
 
         backstack = Arrays.asList(transaction2, transaction1);
         childRouter.setBackstack(backstack, null);
 
-        assertEquals(2, transaction2.transactionIndex);
-        assertEquals(3, transaction1.transactionIndex);
+        assertEquals(2, transaction2.getTransactionIndex());
+        assertEquals(3, transaction1.getTransactionIndex());
 
         childRouter.handleBack();
 

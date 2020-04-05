@@ -1,11 +1,12 @@
 package com.bluelinelabs.conductor;
 
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bluelinelabs.conductor.changehandler.SimpleSwapChangeHandler;
 import com.bluelinelabs.conductor.internal.ClassUtils;
@@ -49,14 +50,16 @@ public abstract class ControllerChangeHandler {
      *
      * @param bundle The Bundle into which data should be stored.
      */
-    public void saveToBundle(@NonNull Bundle bundle) { }
+    public void saveToBundle(@NonNull Bundle bundle) {
+    }
 
     /**
      * Restores data that was saved in the {@link #saveToBundle(Bundle bundle)} method.
      *
      * @param bundle The bundle that has data to be restored
      */
-    public void restoreFromBundle(@NonNull Bundle bundle) { }
+    public void restoreFromBundle(@NonNull Bundle bundle) {
+    }
 
     /**
      * Will be called on change handlers that push a controller if the controller being pushed is
@@ -66,13 +69,15 @@ public abstract class ControllerChangeHandler {
      * @param newTop     The Controller that will now be at the top of the backstack or {@code null}
      *                   if there will be no new Controller at the top
      */
-    public void onAbortPush(@NonNull ControllerChangeHandler newHandler, @Nullable Controller newTop) { }
+    public void onAbortPush(@NonNull ControllerChangeHandler newHandler, @Nullable Controller newTop) {
+    }
 
     /**
      * Will be called on change handlers that push a controller if the controller being pushed is
      * needs to be attached immediately, without any animations or transitions.
      */
-    public void completeImmediately() { }
+    public void completeImmediately() {
+    }
 
     /**
      * Returns a copy of this ControllerChangeHandler. This method is internally used by the library, so
@@ -201,38 +206,36 @@ public abstract class ControllerChangeHandler {
                 fromView = null;
             }
 
-            handler.performChange(container, fromView, toView, isPush, new ControllerChangeCompletedListener() {
-                @Override
-                public void onChangeCompleted() {
-                    if (from != null) {
-                        from.changeEnded(handler, fromChangeType);
-                    }
+            handler.performChange(container, fromView, toView, isPush, () -> {
+                if (from != null) {
+                    from.changeEnded(handler, fromChangeType);
+                }
 
-                    if (to != null) {
-                        inProgressChangeHandlers.remove(to.getInstanceId());
-                        to.changeEnded(handler, toChangeType);
-                    }
+                if (to != null) {
+                    inProgressChangeHandlers.remove(to.getInstanceId());
+                    to.changeEnded(handler, toChangeType);
+                }
 
-                    for (ControllerChangeListener listener : listeners) {
-                        listener.onChangeCompleted(to, from, isPush, container, handler);
-                    }
+                for (ControllerChangeListener listener : listeners) {
+                    listener.onChangeCompleted(to, from, isPush, container, handler);
+                }
 
-                    if (handler.forceRemoveViewOnPush && fromView != null) {
-                        ViewParent fromParent = fromView.getParent();
-                        if (fromParent != null && fromParent instanceof ViewGroup) {
-                            ((ViewGroup)fromParent).removeView(fromView);
-                        }
+                if (handler.forceRemoveViewOnPush && fromView != null) {
+                    ViewParent fromParent = fromView.getParent();
+                    if (fromParent != null && fromParent instanceof ViewGroup) {
+                        ((ViewGroup) fromParent).removeView(fromView);
                     }
+                }
 
-                    if (handler.removesFromViewOnPush() && from != null) {
-                        from.setNeedsAttach(false);
-                    }
+                if (handler.removesFromViewOnPush() && from != null) {
+                    from.setNeedsAttach(false);
                 }
             });
         }
     }
 
-    protected void onEnd(){ }
+    protected void onEnd() {
+    }
 
     public boolean removesFromViewOnPush() {
         return true;
@@ -240,24 +243,6 @@ public abstract class ControllerChangeHandler {
 
     public void setForceRemoveViewOnPush(boolean force) {
         forceRemoveViewOnPush = force;
-    }
-
-    static class ChangeTransaction {
-        @Nullable final Controller to;
-        @Nullable final Controller from;
-        final boolean isPush;
-        @Nullable final ViewGroup container;
-        @Nullable final ControllerChangeHandler changeHandler;
-        @NonNull final List<ControllerChangeListener> listeners;
-
-        public ChangeTransaction(@Nullable Controller to, @Nullable Controller from, boolean isPush, @Nullable ViewGroup container, @Nullable ControllerChangeHandler changeHandler, @NonNull List<ControllerChangeListener> listeners) {
-            this.to = to;
-            this.from = from;
-            this.isPush = isPush;
-            this.container = container;
-            this.changeHandler = changeHandler;
-            this.listeners = listeners;
-        }
     }
 
     /**
@@ -273,7 +258,8 @@ public abstract class ControllerChangeHandler {
          * @param container The containing ViewGroup
          * @param handler   The change handler being used.
          */
-        void onChangeStarted(@Nullable Controller to, @Nullable Controller from, boolean isPush, @NonNull ViewGroup container, @NonNull ControllerChangeHandler handler);
+        default void onChangeStarted(@Nullable Controller to, @Nullable Controller from, boolean isPush, @NonNull ViewGroup container, @NonNull ControllerChangeHandler handler) {
+        }
 
         /**
          * Called when a {@link ControllerChangeHandler} has completed changing {@link Controller}s
@@ -284,7 +270,31 @@ public abstract class ControllerChangeHandler {
          * @param container The containing ViewGroup
          * @param handler   The change handler that was used.
          */
-        void onChangeCompleted(@Nullable Controller to, @Nullable Controller from, boolean isPush, @NonNull ViewGroup container, @NonNull ControllerChangeHandler handler);
+        default void onChangeCompleted(@Nullable Controller to, @Nullable Controller from, boolean isPush, @NonNull ViewGroup container, @NonNull ControllerChangeHandler handler) {
+        }
+    }
+
+    static class ChangeTransaction {
+        @Nullable
+        final Controller to;
+        @Nullable
+        final Controller from;
+        final boolean isPush;
+        @Nullable
+        final ViewGroup container;
+        @Nullable
+        final ControllerChangeHandler changeHandler;
+        @NonNull
+        final List<ControllerChangeListener> listeners;
+
+        public ChangeTransaction(@Nullable Controller to, @Nullable Controller from, boolean isPush, @Nullable ViewGroup container, @Nullable ControllerChangeHandler changeHandler, @NonNull List<ControllerChangeListener> listeners) {
+            this.to = to;
+            this.from = from;
+            this.isPush = isPush;
+            this.container = container;
+            this.changeHandler = changeHandler;
+            this.listeners = listeners;
+        }
     }
 
     /**

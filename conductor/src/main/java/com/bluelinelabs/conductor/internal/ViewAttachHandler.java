@@ -40,13 +40,10 @@ public class ViewAttachHandler implements OnAttachStateChangeListener {
         }
 
         rootAttached = true;
-        listenForDeepestChildAttach(v, new ChildAttachListener() {
-            @Override
-            public void onAttached() {
-                childrenAttached = true;
-                reportAttached();
+        listenForDeepestChildAttach(v, () -> {
+            childrenAttached = true;
+            reportAttached();
 
-            }
         });
     }
 

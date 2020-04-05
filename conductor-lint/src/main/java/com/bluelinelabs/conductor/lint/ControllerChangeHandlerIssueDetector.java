@@ -10,6 +10,7 @@ import com.android.tools.lint.detector.api.JavaContext;
 import com.android.tools.lint.detector.api.Scope;
 import com.android.tools.lint.detector.api.Severity;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.uast.UClass;
 import org.jetbrains.uast.UElement;
 import org.jetbrains.uast.UMethod;
@@ -18,9 +19,10 @@ import org.jetbrains.uast.UTypeReferenceExpression;
 import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("UnstableApiUsage")
 public final class ControllerChangeHandlerIssueDetector extends Detector implements Detector.UastScanner {
 
-    public static final Issue ISSUE =
+    static final Issue ISSUE =
             Issue.create("ValidControllerChangeHandler", "ControllerChangeHandler not instantiatable",
                     "Non-abstract ControllerChangeHandler instances must have a default constructor for the"
                             + " system to re-create them in the case of the process being killed.",
@@ -41,7 +43,7 @@ public final class ControllerChangeHandlerIssueDetector extends Detector impleme
         return new UElementHandler() {
 
             @Override
-            public void visitClass(UClass node) {
+            public void visitClass(@NotNull UClass node) {
                 if (evaluator.isAbstract(node)) {
                     return;
                 }

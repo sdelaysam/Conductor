@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.IntentSender.SendIntentException;
 import android.os.Bundle;
+import android.view.ViewGroup;
+
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import android.view.ViewGroup;
 
 import com.bluelinelabs.conductor.ControllerChangeHandler.ControllerChangeListener;
 import com.bluelinelabs.conductor.internal.TransactionIndexer;
@@ -47,7 +48,7 @@ class ControllerHostedRouter extends Router {
             this.container = container;
 
             for (RouterTransaction transaction : backstack) {
-                transaction.controller.setParentController(controller);
+                transaction.controller().setParentController(controller);
             }
 
             watchContainerAttach();
@@ -66,8 +67,8 @@ class ControllerHostedRouter extends Router {
             }
         }
         for (RouterTransaction transaction : backstack) {
-            if (transaction.controller.getView() != null) {
-                transaction.controller.detach(transaction.controller.getView(), true, false);
+            if (transaction.controller().getView() != null) {
+                transaction.controller().detach(transaction.controller().getView(), true, false);
             }
         }
 
@@ -79,7 +80,7 @@ class ControllerHostedRouter extends Router {
     final void setDetachFrozen(boolean frozen) {
         isDetachFrozen = frozen;
         for (RouterTransaction transaction : backstack) {
-            transaction.controller.setDetachFrozen(frozen);
+            transaction.controller().setDetachFrozen(frozen);
         }
     }
 
@@ -92,7 +93,7 @@ class ControllerHostedRouter extends Router {
     @Override
     protected void pushToBackstack(@NonNull RouterTransaction entry) {
         if (isDetachFrozen) {
-            entry.controller.setDetachFrozen(true);
+            entry.controller().setDetachFrozen(true);
         }
         super.pushToBackstack(entry);
     }
@@ -101,7 +102,7 @@ class ControllerHostedRouter extends Router {
     public void setBackstack(@NonNull List<RouterTransaction> newBackstack, @Nullable ControllerChangeHandler changeHandler) {
         if (isDetachFrozen) {
             for (RouterTransaction transaction : newBackstack) {
-                transaction.controller.setDetachFrozen(true);
+                transaction.controller().setDetachFrozen(true);
             }
         }
         super.setBackstack(newBackstack, changeHandler);

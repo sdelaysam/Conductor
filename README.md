@@ -1,4 +1,4 @@
-[![Travis Build](https://travis-ci.org/bluelinelabs/Conductor.svg)](https://travis-ci.org/bluelinelabs/Conductor) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Conductor-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3361) [![Javadocs](http://javadoc.io/badge/com.bluelinelabs/conductor.svg)](http://javadoc.io/doc/com.bluelinelabs/conductor)
+[![Travis Build](https://travis-ci.com/bluelinelabs/Conductor.svg)](https://travis-ci.com/bluelinelabs/Conductor) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Conductor-brightgreen.svg?style=flat)](http://android-arsenal.com/details/1/3361) [![Javadocs](http://javadoc.io/badge/com.bluelinelabs/conductor.svg)](http://javadoc.io/doc/com.bluelinelabs/conductor)
 
 # Conductor
 
@@ -20,23 +20,22 @@ Conductor is architecture-agnostic and does not try to force any design decision
 ## Installation
 
 ```gradle
-implementation 'com.bluelinelabs:conductor:3.0.0-rc1'
+implementation 'com.bluelinelabs:conductor:3.0.0-rc4'
 
-// If you want the components that go along with
-// Android's support libraries (currently just a PagerAdapter):
-implementation 'com.bluelinelabs:conductor-support:3.0.0-rc1'
+// AndroidX Transition change handlers:
+implementation 'com.bluelinelabs:conductor-androidx-transition:3.0.0-rc4'
 
-// If you want RxJava lifecycle support:
-implementation 'com.bluelinelabs:conductor-rxlifecycle:3.0.0-rc1'
+// ViewPager PagerAdapter:
+implementation 'com.bluelinelabs:conductor-viewpager:3.0.0-rc4'
 
-// If you want RxJava2 lifecycle support:
-implementation 'com.bluelinelabs:conductor-rxlifecycle2:3.0.0-rc1'
+// RxJava2 lifecycle support:
+implementation 'com.bluelinelabs:conductor-rxlifecycle2:3.0.0-rc4'
 
-// If you want RxJava2 Autodispose support:
-implementation 'com.bluelinelabs:conductor-autodispose:3.0.0-rc1'
+// RxJava2 Autodispose support:
+implementation 'com.bluelinelabs:conductor-autodispose:3.0.0-rc4'
 
-// If you want Controllers that are Lifecycle-aware (architecture components):
-implementation 'com.bluelinelabs:conductor-archlifecycle:3.0.0-rc1'
+// Lifecycle-aware Controllers (architecture components):
+implementation 'com.bluelinelabs:conductor-archlifecycle:3.0.0-rc4'
 ```
 
 **SNAPSHOT**
@@ -58,7 +57,7 @@ allprojects {
 __Controller__ | The Controller is the View wrapper that will give you all of your lifecycle management features. Think of it as a lighter-weight and more predictable Fragment alternative with an easier to manage lifecycle.
 __Router__ | A Router implements navigation and backstack handling for Controllers. Router objects are attached to Activity/containing ViewGroup pairs. Routers do not directly render or push Views to the container ViewGroup, but instead defer this responsibility to the ControllerChangeHandler specified in a given transaction.
 __ControllerChangeHandler__ | ControllerChangeHandlers are responsible for swapping the View for one Controller to the View of another. They can be useful for performing animations and transitions between Controllers. Several default ControllerChangeHandlers are included.
-__ControllerTransaction__ | Transactions are used to define data about adding Controllers. RouterControllerTransactions are used to push a Controller to a Router with specified ControllerChangeHandlers, while ChildControllerTransactions are used to add child Controllers.
+__RouterTransaction__ | Transactions are used to define data about adding Controllers. RouterTransactions are used to push a Controller to a Router with specified ControllerChangeHandlers, while ChildControllerTransactions are used to add child Controllers.
 
 ## Getting Started
 
@@ -99,7 +98,7 @@ public class MainActivity extends Activity {
 public class HomeController extends Controller {
 
     @Override
-    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container) {
+    protected View onCreateView(@NonNull LayoutInflater inflater, @NonNull ViewGroup container, @Nullable Bundle savedViewState) {
         View view = inflater.inflate(R.layout.controller_home, container, false);
         ((TextView) view.findViewById(R.id.tv_title)).setText("Hello World");
         return view;
@@ -142,7 +141,7 @@ The community has provided several helpful modules to make developing apps with 
 
 ## License
 ```
-Copyright 2016 BlueLine Labs, Inc.
+Copyright 2020 BlueLine Labs, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

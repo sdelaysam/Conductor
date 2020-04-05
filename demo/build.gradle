@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.bluelinelabs.conductor.demo"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 21
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0.0"
@@ -40,11 +40,11 @@ dependencies {
     implementation rootProject.ext.picasso
 
     implementation project(':conductor')
-    implementation project(':conductor-modules:support')
-    implementation project(':conductor-modules:rxlifecycle')
+    implementation project(':conductor-modules:viewpager')
     implementation project(':conductor-modules:rxlifecycle2')
     implementation project(':conductor-modules:autodispose')
     implementation project(':conductor-modules:arch-components-lifecycle')
+    implementation project(':conductor-modules:transition-androidx')
 
     debugImplementation rootProject.ext.leakCanary
     releaseImplementation rootProject.ext.leakCanaryNoOp
