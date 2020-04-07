@@ -12,7 +12,7 @@ import com.bluelinelabs.conductor.RouterTransaction;
 import com.bluelinelabs.conductor.demo.R;
 import com.bluelinelabs.conductor.demo.controllers.base.BaseController;
 import com.bluelinelabs.conductor.demo.widget.NonScrollableViewPager;
-import com.bluelinelabs.conductor.support.RouterPagerAdapter;
+import com.bluelinelabs.conductor.viewpager.RouterPagerAdapter;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import butterknife.BindView;
