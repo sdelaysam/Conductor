@@ -219,6 +219,12 @@ public abstract class Router {
         performControllerChange(transaction.pushChangeHandler(handler), topTransaction, true);
     }
 
+    @Nullable
+    public Controller getTopController() {
+        RouterTransaction transaction = backstack.peek();
+        return transaction != null ? transaction.controller() : null;
+    }
+
     void destroy(boolean popViews) {
         popsLastView = true;
         final List<RouterTransaction> poppedControllers = backstack.popAll();
