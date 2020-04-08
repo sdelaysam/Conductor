@@ -632,28 +632,25 @@ public abstract class Controller {
      * @return True if this Controller has consumed the back button press, otherwise false
      */
     public boolean handleBack() {
-        List<RouterTransaction> childTransactions = new ArrayList<>();
+        Controller controller = getTopChildController();
+        return controller != null && controller.getRouter().handleBack();
+    }
 
+    @Nullable
+    public Controller getTopChildController() {
+        RouterTransaction topTransaction = null;
         for (ControllerHostedRouter childRouter : childRouters) {
-            childTransactions.addAll(childRouter.getBackstack());
+            Iterator<RouterTransaction> it = childRouter.backstack.iterator();
+            while (it.hasNext()) {
+                RouterTransaction childTransaction = it.next();
+                if (childTransaction.controller().isAttached()) {
+                    if (topTransaction == null || topTransaction.getTransactionIndex() < childTransaction.getTransactionIndex()) {
+                        topTransaction = childTransaction;
+                    }
+                    break;
+                }
         }
-
-        Collections.sort(childTransactions, new Comparator<RouterTransaction>() {
-            @Override
-            public int compare(RouterTransaction o1, RouterTransaction o2) {
-                return o2.getTransactionIndex() - o1.getTransactionIndex();
-            }
-        });
-
-        for (RouterTransaction transaction : childTransactions) {
-            Controller childController = transaction.controller();
-
-            if (childController.isAttached() && childController.getRouter().handleBack()) {
-                return true;
-            }
-        }
-
-        return false;
+        return topTransaction != null ? topTransaction.controller() : null;
     }
 
     /**
