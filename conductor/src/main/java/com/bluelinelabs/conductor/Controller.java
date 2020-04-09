@@ -32,6 +32,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -611,10 +612,15 @@ public abstract class Controller {
     public Controller getTopChildController() {
         RouterTransaction topTransaction = null;
         for (ControllerHostedRouter childRouter : childRouters) {
-            RouterTransaction transaction = childRouter.backstack.peek();
-            if (transaction != null && transaction.controller().isAttached()
-                    && (topTransaction == null || topTransaction.getTransactionIndex() < transaction.getTransactionIndex())) {
-                topTransaction = transaction;
+            Iterator<RouterTransaction> it = childRouter.backstack.iterator();
+            while (it.hasNext()) {
+                RouterTransaction childTransaction = it.next();
+                if (childTransaction.controller().isAttached()) {
+                    if (topTransaction == null || topTransaction.getTransactionIndex() < childTransaction.getTransactionIndex()) {
+                        topTransaction = childTransaction;
+                    }
+                    break;
+                }
             }
         }
         return topTransaction != null ? topTransaction.controller() : null;
