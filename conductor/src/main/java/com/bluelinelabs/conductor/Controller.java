@@ -768,8 +768,8 @@ public abstract class Controller {
         this.needsAttach = needsAttach;
     }
 
-    final void prepareForHostDetach() {
-        needsAttach = needsAttach || attached;
+    final void prepareForHostDetach(boolean wasAttached) {
+        needsAttach = wasAttached;
 
         for (ControllerHostedRouter router : childRouters) {
             router.prepareForHostDetach();
