@@ -641,12 +641,11 @@ public abstract class Router {
     public void prepareForHostDetach() {
         pendingControllerChanges.clear(); // rely on backstack based restoration in rebindIfNeeded
 
-        if (!backstack.isEmpty()) {
-            RouterTransaction top = backstack.peek();
-            for (RouterTransaction transaction : backstack) {
-                ControllerChangeHandler.completeHandlerImmediately(transaction.controller().getInstanceId());
-                transaction.controller().prepareForHostDetach(transaction == top);
-            }
+        boolean needsAttach = true;
+        for (RouterTransaction transaction : backstack) {
+            ControllerChangeHandler.completeHandlerImmediately(transaction.controller().getInstanceId());
+            transaction.controller().prepareForHostDetach(needsAttach);
+            needsAttach = transaction.pushChangeHandler() != null && !transaction.pushChangeHandler().removesFromViewOnPush();
         }
     }
 
