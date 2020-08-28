@@ -22,7 +22,8 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
     private static final String KEY_REMOVES_FROM_ON_PUSH = "AnimatorChangeHandler.removesFromViewOnPush";
 
     @SuppressWarnings("WeakerAccess")
-    public static final long DEFAULT_ANIMATION_DURATION = -1;
+    public static long DEFAULT_ANIMATION_DURATION = -1;
+    public static long DEFAULT_ANIMATION_DELAY = 50L;
 
     private long animationDuration;
     boolean removesFromViewOnPush;
@@ -127,6 +128,7 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
             } else if (to.getParent() == null) {
                 container.addView(to, container.indexOfChild(from));
             }
+            to.setVisibility(View.INVISIBLE);
 
             if (to.getWidth() <= 0 && to.getHeight() <= 0) {
                 readyToAnimate = false;
@@ -159,10 +161,17 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
 
     void performAnimation(@NonNull final ViewGroup container, @Nullable final View from, @Nullable final View to, final boolean isPush, final boolean toAddedToContainer, @NonNull final ControllerChangeCompletedListener changeListener) {
         if (canceled) {
+            if (to != null) {
+                to.setVisibility(View.VISIBLE);
+            }
+
             complete(changeListener, null);
             return;
         }
         if (needsImmediateCompletion) {
+            if (to != null) {
+                to.setVisibility(View.VISIBLE);
+            }
             if (from != null && (!isPush || removesFromViewOnPush)) {
                 container.removeView(from);
             }
@@ -207,9 +216,17 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
                     }
                 }
             }
+
+            @Override
+            public void onAnimationStart(Animator animation) {
+                super.onAnimationStart(animation);
+                if (to != null) {
+                    to.setVisibility(View.VISIBLE);
+                }
+            }
         });
 
-        animator.start();
+        container.postDelayed(() -> animator.start(), DEFAULT_ANIMATION_DELAY);
     }
 
     private class OnAnimationReadyOrAbortedListener implements ViewTreeObserver.OnPreDrawListener {
