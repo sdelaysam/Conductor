@@ -205,6 +205,9 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
 
             @Override
             public void onAnimationEnd(Animator animation) {
+                if (to != null) {
+                    to.setVisibility(View.VISIBLE);
+                }
                 if (!canceled && animator != null) {
                     if (from != null && (!isPush || removesFromViewOnPush)) {
                         container.removeView(from);
