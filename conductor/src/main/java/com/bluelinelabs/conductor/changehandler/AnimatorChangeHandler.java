@@ -4,11 +4,12 @@ import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.AnimatorListenerAdapter;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.bluelinelabs.conductor.Controller;
 import com.bluelinelabs.conductor.ControllerChangeHandler;
@@ -226,7 +227,11 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
             }
         });
 
-        container.postDelayed(() -> animator.start(), DEFAULT_ANIMATION_DELAY);
+        container.postDelayed(() -> {
+            if (animator != null) {
+                animator.start();
+            }
+        }, DEFAULT_ANIMATION_DELAY);
     }
 
     private class OnAnimationReadyOrAbortedListener implements ViewTreeObserver.OnPreDrawListener {
