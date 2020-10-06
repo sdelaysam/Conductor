@@ -103,11 +103,15 @@ public abstract class TransitionChangeHandler extends ControllerChangeHandler {
         prepareForTransition(container, from, to, transition, isPush, new OnTransitionPreparedListener() {
             @Override
             public void onPrepared() {
-                if (!canceled) {
-                    TransitionManager.beginDelayedTransition(container, transition);
-                    executePropertyChanges(container, from, to, transition, isPush);
-                    container.post(onTransitionNotStarted);
+                if (canceled) return;
+                if (needsImmediateCompletion) {
+                    executePropertyChanges(container, from, to, null, isPush);
+                    changeListener.onChangeCompleted();
+                    return;
                 }
+                TransitionManager.beginDelayedTransition(container, transition);
+                executePropertyChanges(container, from, to, transition, isPush);
+                container.post(onTransitionNotStarted);
             }
         });
     }
