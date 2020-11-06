@@ -230,9 +230,12 @@ public abstract class AnimatorChangeHandler extends ControllerChangeHandler {
             }
         });
 
-        container.postDelayed(() -> {
-            if (animator != null) {
-                animator.start();
+        container.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (animator != null) {
+                    animator.start();
+                }
             }
         }, DEFAULT_ANIMATION_DELAY);
     }
