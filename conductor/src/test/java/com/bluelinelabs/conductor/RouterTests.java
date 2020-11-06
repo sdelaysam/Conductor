@@ -504,9 +504,9 @@ public class RouterTests {
 
 
         router.setRoot(RouterTransaction.with(rootController));
-        Router router1 = rootController.getChildRouter(rootController.getView().findViewById(TestController.CHILD_VIEW_ID_1));
+        Router router1 = rootController.getChildRouter((ViewGroup)rootController.getView().findViewById(TestController.CHILD_VIEW_ID_1));
         router1.setRoot(RouterTransaction.with(childController1));
-        Router router2 = childController1.getChildRouter(childController1.getView().findViewById(TestController.CHILD_VIEW_ID_1));
+        Router router2 = childController1.getChildRouter((ViewGroup)childController1.getView().findViewById(TestController.CHILD_VIEW_ID_1));
         router2.setRoot(RouterTransaction.with(childController11));
         router2.pushController(RouterTransaction.with(childController12).pushChangeHandler(new HorizontalChangeHandler()).popChangeHandler(new HorizontalChangeHandler()));
         router2.pushController(RouterTransaction.with(childController13).pushChangeHandler(new HorizontalChangeHandler()).popChangeHandler(new HorizontalChangeHandler()));
