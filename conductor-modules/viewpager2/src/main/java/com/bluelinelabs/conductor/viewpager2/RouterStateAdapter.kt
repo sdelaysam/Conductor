@@ -89,6 +89,10 @@ abstract class RouterStateAdapter(private val host: Controller) :
     super.onViewDetachedFromWindow(holder)
 
     detachRouter(holder)
+
+    // Controller has fully detached and destroyed its view reference by now. Remove the leftover
+    // view from the container.
+    holder.container.removeAllViews()
   }
 
   override fun onViewRecycled(holder: RouterViewHolder) {
