@@ -48,8 +48,7 @@ abstract class RouterStateAdapter(private val host: Controller) :
   }
 
   private fun inferViewPager(recyclerView: RecyclerView): ViewPager2 {
-    return recyclerView.parent as? ViewPager2 ?:
-      error("Expected ViewPager2 instance. Got: ${recyclerView.parent}")
+    return recyclerView.parent as? ViewPager2 ?: error("Expected ViewPager2 instance. Got: ${recyclerView.parent}")
   }
 
   override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -119,6 +118,18 @@ abstract class RouterStateAdapter(private val host: Controller) :
   }
 
   override fun saveState(): Parcelable {
+    // Ensure all visible pages are saved, starting at the outermost pages and working our way in
+    val visiblePositions = (0 until visibleRouters.size()).map { visibleRouters.keyAt(it) }.toMutableList()
+    while (visiblePositions.isNotEmpty()) {
+      val lastPosition = visiblePositions.removeAt(visiblePositions.lastIndex)
+      savePage(getItemId(lastPosition), visibleRouters[lastPosition])
+
+      if (visiblePositions.isNotEmpty()) {
+        val firstPosition = visiblePositions.removeAt(0)
+        savePage(getItemId(firstPosition), visibleRouters[firstPosition])
+      }
+    }
+
     return SavedState(
       savedPagesKeys = (0 until savedPages.size()).map { savedPages.keyAt(it) },
       savedPagesValues = (0 until savedPages.size()).map { savedPages.valueAt(it) },
@@ -176,14 +187,7 @@ abstract class RouterStateAdapter(private val host: Controller) :
     holder.currentRouter?.let { router ->
       router.prepareForHostDetach()
 
-      val savedState = Bundle()
-      router.saveInstanceState(savedState)
-      savedPages.put(holder.currentItemId, savedState)
-
-      savedPageHistory.remove(holder.currentItemId)
-      savedPageHistory.add(holder.currentItemId)
-
-      ensurePagesSaved()
+      savePage(holder.currentItemId, router)
 
       if (visibleRouters[holder.currentItemPosition] == router) {
         visibleRouters.remove(holder.currentItemPosition)
@@ -191,6 +195,17 @@ abstract class RouterStateAdapter(private val host: Controller) :
     }
 
     holder.attached = false
+  }
+
+  private fun savePage(itemId: Long, router: Router) {
+    val savedState = Bundle()
+    router.saveInstanceState(savedState)
+    savedPages.put(itemId, savedState)
+
+    savedPageHistory.remove(itemId)
+    savedPageHistory.add(itemId)
+
+    ensurePagesSaved()
   }
 
   private fun ensurePagesSaved() {

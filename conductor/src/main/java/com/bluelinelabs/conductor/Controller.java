@@ -1098,7 +1098,7 @@ public abstract class Controller {
                 });
                 viewAttachHandler.listenForAttach(view);
             }
-        } else if (retainViewMode == RetainViewMode.RETAIN_DETACH) {
+        } else {
             restoreChildControllerHosts();
         }
 
@@ -1110,7 +1110,7 @@ public abstract class Controller {
             if (!childRouter.hasHost()) {
                 View containerView = view.findViewById(childRouter.getHostId());
 
-                if (containerView != null && containerView instanceof ViewGroup) {
+                if (containerView instanceof ViewGroup) {
                     childRouter.setHostContainer(this, (ViewGroup) containerView);
                     childRouter.rebindIfNeeded();
                 }
